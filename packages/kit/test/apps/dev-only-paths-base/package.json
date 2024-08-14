@@ -1,5 +1,5 @@
 {
-	"name": "test-dev-only",
+	"name": "test-dev-only-paths-base",
 	"private": true,
 	"version": "0.0.2-next.0",
 	"scripts": {
