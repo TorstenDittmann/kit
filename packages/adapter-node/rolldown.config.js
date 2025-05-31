@@ -1,6 +1,4 @@
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import json from '@rollup/plugin-json';
+import { defineConfig } from 'rolldown';
 import { builtinModules } from 'node:module';
 
 function prefixBuiltinModules() {
@@ -13,14 +11,15 @@ function prefixBuiltinModules() {
 	};
 }
 
-export default [
+export default defineConfig([
 	{
 		input: 'src/index.js',
 		output: {
 			file: 'files/index.js',
 			format: 'esm'
 		},
-		plugins: [nodeResolve({ preferBuiltins: true }), commonjs(), json(), prefixBuiltinModules()],
+		platform: 'node',
+		plugins: [prefixBuiltinModules()],
 		external: ['ENV', 'HANDLER']
 	},
 	{
@@ -29,7 +28,8 @@ export default [
 			file: 'files/env.js',
 			format: 'esm'
 		},
-		plugins: [nodeResolve(), commonjs(), json(), prefixBuiltinModules()],
+		platform: 'node',
+		plugins: [prefixBuiltinModules()],
 		external: ['HANDLER']
 	},
 	{
@@ -39,7 +39,8 @@ export default [
 			format: 'esm',
 			inlineDynamicImports: true
 		},
-		plugins: [nodeResolve(), commonjs(), json(), prefixBuiltinModules()],
+		platform: 'node',
+		plugins: [prefixBuiltinModules()],
 		external: ['ENV', 'MANIFEST', 'SERVER', 'SHIMS']
 	},
 	{
@@ -48,6 +49,7 @@ export default [
 			file: 'files/shims.js',
 			format: 'esm'
 		},
-		plugins: [nodeResolve(), commonjs(), prefixBuiltinModules()]
+		platform: 'node',
+		plugins: [prefixBuiltinModules()]
 	}
-];
+]);
