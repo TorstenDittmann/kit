@@ -1,9 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { rollup } from 'rollup';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import json from '@rollup/plugin-json';
+import { rolldown } from 'rolldown';
 
 const files = fileURLToPath(new URL('./files', import.meta.url).href);
 
@@ -51,24 +48,15 @@ export default function (opts = {}) {
 			// we bundle the Vite output so that deployments only need
 			// their production dependencies. Anything in devDependencies
 			// will get included in the bundled code
-			const bundle = await rollup({
+			const bundle = await rolldown({
 				input: {
 					index: `${tmp}/index.js`,
 					manifest: `${tmp}/manifest.js`
 				},
+				platform: 'node',
 				external: [
 					// dependencies could have deep exports, so we need a regex
 					...Object.keys(pkg.dependencies || {}).map((d) => new RegExp(`^${d}(\\/.*)?$`))
-				],
-				plugins: [
-					nodeResolve({
-						preferBuiltins: true,
-						exportConditions: ['node']
-					}),
-					// @ts-ignore https://github.com/rollup/plugins/issues/1329
-					commonjs({ strictRequires: true }),
-					// @ts-ignore https://github.com/rollup/plugins/issues/1329
-					json()
 				]
 			});
 
